@@ -16,14 +16,30 @@ app.get('/', (req, res) => {
     <head>
       <title>Image Gallery</title>
       <style>
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+        .image-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          max-width: 50vw; /* Set max-width to 50% of the viewport width */
+        }
         img {
-          display: block;
+          max-width: 100%;
+          // max-height: 100vh; /* Set max-height to x% of the viewport height */
           margin-bottom: 10px;
         }
       </style>
     </head>
     <body>
-      ${imageTags}
+      <div class="image-container">
+        ${imageTags}
+      </div>
     </body>
     </html>
   `;
