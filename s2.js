@@ -30,55 +30,43 @@ app.get('/', (req, res) => {
           max-width: 50vw;
         }
         img {
-          max-height: 100vh; /* Set max-height to 100% of the viewport height */
-          width: auto; /* Preserve aspect ratio */
-          margin: auto; /* Center the image horizontally and vertically */
+          max-height: 100vh;
+          width: auto;
+          margin: auto;
           margin-bottom: 10px;
-          // max-width: 100%;
-          // margin: auto;
-          // margin-bottom: 10px;
         }
       </style>
     </head>
     <body>
       <div class="image-container">
         ${imageTags}
-      </div> 
-
+      </div>
       <script>
         let selectedImages = JSON.parse(localStorage.getItem('selectedImages')) || [];
-        
-        const imageElements = document.querySelectorAll('.image-container img');
 
-        let currentIndex = 0;
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        function handleKeyDown(event) {
+        document.addEventListener('keydown', function(event) {
           if (event.key === 'ArrowRight') {
-            showNextImage();
-          } else if (event.key === 'ArrowLeft') {
-            showPrevImage();
+            scrollToNextImage();
           } else if (event.key === 'b') {
-            console.log("HELLO");
             addCurrentImageToList();
-          } else if (event.key === 'd') {
-            exportSelectedImagesToJSON();
           }
-        }
+        });
 
-        function showNextImage() {
-          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-          const nextImageTop = imageElements[currentIndex + 1].getBoundingClientRect().top + currentScroll;
-          currentIndex = (currentIndex + 1) % imageElements.length;
-          imageElements[currentIndex].scrollIntoView({ block: 'start' });
-        }
+        function scrollToNextImage() {
+          const images = document.querySelectorAll('img');
+          let nextImage = null;
 
-        function showPrevImage() {
-          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-          const prevImageTop = imageElements[currentIndex - 1].getBoundingClientRect().top + currentScroll;
-          currentIndex = (currentIndex - 1 + imageElements.length) % imageElements.length;
-          imageElements[currentIndex].scrollIntoView({ block: 'start' });
+          for (const img of images) {
+            const rect = img.getBoundingClientRect();
+            if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+              nextImage = img.nextElementSibling;
+              break;
+            }
+          }
+
+          if (nextImage) {
+            nextImage.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          }
         }
 
         function addCurrentImageToList() {
@@ -105,21 +93,6 @@ app.get('/', (req, res) => {
           }
           return null;
         }
-
-        function exportSelectedImagesToJSON() {
-          const fileContent = JSON.stringify(selectedImages);
-          const blob = new Blob([fileContent], { type: 'application/json' });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'selected_images.json';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }
-        
-        
       </script>
     </body>
     </html>
