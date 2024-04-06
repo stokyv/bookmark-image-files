@@ -46,7 +46,9 @@ app.get('/', (req, res) => {
       </div> 
 
       <script>
-        let selectedImages = JSON.parse(localStorage.getItem('selectedImages')) || [];
+        localStorage.removeItem('selectedImages');
+        // let selectedImages = JSON.parse(localStorage.getItem('selectedImages')) || [];
+        let selectedImages = [];
         
         const imageElements = document.querySelectorAll('.image-container img');
 
@@ -64,6 +66,8 @@ app.get('/', (req, res) => {
             addCurrentImageToList();
           } else if (event.key === 'd') {
             exportSelectedImagesToJSON();
+          } else if (event.key === 's') {
+            jumpToImage();
           }
         }
 
@@ -118,6 +122,26 @@ app.get('/', (req, res) => {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
         }
+
+        function jumpToImage() {
+          const inputElement = document.createElement('input');
+          inputElement.type = 'number';
+          inputElement.placeholder = 'Enter image index';
+          inputElement.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+              const targetIndex = parseInt(inputElement.value);
+              if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= imageElements.length) {
+                console.log('Invalid index');
+              } else {
+                currentIndex = targetIndex;
+                imageElements[currentIndex].scrollIntoView({ block: 'start' });
+              }
+              document.body.removeChild(inputElement);
+            }
+          });
+          document.body.appendChild(inputElement);
+          inputElement.focus();
+        }
         
         
       </script>
@@ -136,4 +160,5 @@ function getImageFiles(dir) {
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+
 });

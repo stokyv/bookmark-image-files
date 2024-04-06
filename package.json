@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "localstorage-memory": "^1.0.3"
   }
 }
